@@ -1,0 +1,7 @@
+# local configuration
+conf/params.local.xml
+
+# temporary data
+data/tmp*.txt
+data/*.csv
+
