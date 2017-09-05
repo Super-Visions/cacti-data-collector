@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Default values for parameters. Do NOT alter this file, use params.local.xml instead -->
+<parameters>
+	<default_org_id>Demo</default_org_id>
+	<cacti_db_host>localhost</cacti_db_host>
+	<cacti_db_user>cactiuser</cacti_db_user>
+	<cacti_db_pass>cactiuser</cacti_db_pass>
+	<cacti_db_database>cacti</cacti_db_database>
+
+	<json_placeholders type="hash">
+		<prefix>Cacti</prefix>
+		<cacti_url>http://localhost/cacti</cacti_url>
+		<full_load_interval>604800</full_load_interval><!-- 7 days (in seconds): 7*24*60*60 -->
+	</json_placeholders>
+</parameters>

@@ -1,0 +1,282 @@
+{
+	"name": "$prefix$:Device",
+	"description": "Cacti Data Collector (v. $version$): Network Devices",
+	"status": "implementation",
+	"user_id": "$synchro_user$",
+	"notify_contact_id": "$contact_to_notify$",
+	"scope_class": "NetworkDevice",
+	"database_table_name": "",
+	"scope_restriction": "",
+	"full_load_periodicity": "$full_load_interval$",
+	"reconciliation_policy": "use_attributes",
+	"action_on_zero": "create",
+	"action_on_one": "update",
+	"action_on_multiple": "error",
+	"delete_policy": "ignore",
+	"delete_policy_update": "",
+	"delete_policy_retention": "0",
+	"attribute_list": [
+		{
+			"attcode": "applicationsolution_list",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"row_separator": "|",
+			"attribute_separator": ";",
+			"value_separator": ":",
+			"attribute_qualifier": "'",
+			"finalclass": "SynchroAttLinkSet",
+			"friendlyname": "applicationsolution_list"
+		},
+		{
+			"attcode": "asset_number",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "asset_number"
+		},
+		{
+			"attcode": "brand_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "brand_id"
+		},
+		{
+			"attcode": "business_criticity",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "business_criticity"
+		},
+		{
+			"attcode": "connectablecis_list",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"row_separator": "|",
+			"attribute_separator": ";",
+			"value_separator": ":",
+			"attribute_qualifier": "'",
+			"finalclass": "SynchroAttLinkSet",
+			"friendlyname": "connectablecis_list"
+		},
+		{
+			"attcode": "contacts_list",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"row_separator": "|",
+			"attribute_separator": ";",
+			"value_separator": ":",
+			"attribute_qualifier": "'",
+			"finalclass": "SynchroAttLinkSet",
+			"friendlyname": "contacts_list"
+		},
+		{
+			"attcode": "description",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "description"
+		},
+		{
+			"attcode": "documents_list",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"row_separator": "|",
+			"attribute_separator": ";",
+			"value_separator": ":",
+			"attribute_qualifier": "'",
+			"finalclass": "SynchroAttLinkSet",
+			"friendlyname": "documents_list"
+		},
+		{
+			"attcode": "enclosure_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "enclosure_id"
+		},
+		{
+			"attcode": "end_of_warranty",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "end_of_warranty"
+		},
+		{
+			"attcode": "iosversion_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "iosversion_id"
+		},
+		{
+			"attcode": "location_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "location_id"
+		},
+		{
+			"attcode": "managementip_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "managementip_id"
+		},
+		{
+			"attcode": "model_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "model_id"
+		},
+		{
+			"attcode": "move2production",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "move2production"
+		},
+		{
+			"attcode": "name",
+			"update": "1",
+			"reconcile": "1",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "name"
+		},
+		{
+			"attcode": "nb_u",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "nb_u"
+		},
+		{
+			"attcode": "networkdevice_list",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"row_separator": "|",
+			"attribute_separator": ";",
+			"value_separator": ":",
+			"attribute_qualifier": "'",
+			"finalclass": "SynchroAttLinkSet",
+			"friendlyname": "networkdevice_list"
+		},
+		{
+			"attcode": "networkdevicetype_id",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "friendlyname",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "networkdevicetype_id"
+		},
+		{
+			"attcode": "org_id",
+			"update": "1",
+			"reconcile": "1",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "friendlyname",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "org_id"
+		},
+		{
+			"attcode": "powerA_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "powerA_id"
+		},
+		{
+			"attcode": "powerB_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "powerB_id"
+		},
+		{
+			"attcode": "purchase_date",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "purchase_date"
+		},
+		{
+			"attcode": "rack_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "rack_id"
+		},
+		{
+			"attcode": "ram",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "ram"
+		},
+		{
+			"attcode": "serialnumber",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "serialnumber"
+		},
+		{
+			"attcode": "status",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "status"
+		},
+		{
+			"attcode": "tickets_list",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"row_separator": "|",
+			"attribute_separator": ";",
+			"value_separator": ":",
+			"attribute_qualifier": "'",
+			"finalclass": "SynchroAttLinkSet",
+			"friendlyname": "tickets_list"
+		}
+	],
+	"user_delete_policy": "nobody",
+	"url_icon": "$cacti_url$\/images\/favicon.ico",
+	"url_application": "$cacti_url$\/host.php?action=edit&id=$primary_key$"
+}
