@@ -18,7 +18,34 @@ class CactiDeviceCollector extends CactiCollector
 	{
 		if (is_null(static::$aDevices))
 		{
+			$oNetworkDeviceTypeMappings = new MappingTable('network_device_type_mapping');
+
 			$oDB = static::ConnectDB();
+
+			$sDefaultOrg = Utils::GetConfigurationValue('default_org_id');
+
+			if ($oResult = $oDB->query("SELECT
+  h.id,
+  h.description,
+  h.hostname,
+  ht.name AS template_name,
+  h.notes
+FROM `host` AS h
+JOIN host_template AS ht
+  ON (ht.id = h.host_template_id)
+WHERE disabled != 'on' AND h.status > 1;"))
+			{
+				while ($oHost = $oResult->fetch_object())
+				{
+					static::$aDevices[] = array(
+						'primary_key' => $oHost->id,
+						'name' => $oHost->description,
+						'org_id' => $sDefaultOrg,
+						'networkdevicetype_id' => $oNetworkDeviceTypeMappings->MapValue($oHost->template_name, 'Other'),
+						'description' => $oHost->notes,
+					);
+				}
+			}
 
 		}
 		return static::$aDevices;
@@ -45,12 +72,7 @@ class CactiDeviceCollector extends CactiCollector
 	{
 		if ($this->idx < count(static::$aDevices))
 		{
-			$aDevice = static::$aDevices[$this->idx++];
-			return array(
-				'primary_key' => $aDevice['primary_key'],
-				'name' => $aDevice['name'],
-				'networkdevicetype_id' => $aDevice['networkdevicetype'],
-			);
+			return static::$aDevices[$this->idx++];
 		}
 		return false;
 	}

@@ -79,7 +79,7 @@
 		},
 		{
 			"attcode": "description",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
@@ -278,5 +278,5 @@
 	],
 	"user_delete_policy": "nobody",
 	"url_icon": "$cacti_url$\/images\/favicon.ico",
-	"url_application": "$cacti_url$\/host.php?action=edit&id=$primary_key$"
+	"url_application": "$cacti_url$\/host.php?action=edit&id=$replica->primary_key$"
 }

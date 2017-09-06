@@ -6,7 +6,19 @@
 	<cacti_db_user>cactiuser</cacti_db_user>
 	<cacti_db_pass>cactiuser</cacti_db_pass>
 	<cacti_db_database>cacti</cacti_db_database>
-
+	<network_device_type_mapping type="array">
+		<!-- Syntax /pattern/replacement where:
+		  any delimiter can be used (not only /) but the delimiter cannot be present in the "replacement" string
+		  pattern is a RegExpr pattern
+		  replacement is a sprintf string in which:
+			  %1$s will be replaced by the whole matched text,
+			  %2$s will be replaced by the first matched group, if any group is defined in the RegExpr
+			  %3$s will be replaced by the second matched group, etc...
+		  subject will be the host template name
+		-->
+		<pattern>/Cisco (\w+)/%2$s</pattern>
+		<pattern>/.+/Other</pattern>
+	</network_device_type_mapping>
 	<json_placeholders type="hash">
 		<prefix>Cacti</prefix>
 		<cacti_url>http://localhost/cacti</cacti_url>
