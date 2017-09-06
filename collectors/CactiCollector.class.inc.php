@@ -29,7 +29,7 @@ abstract class CactiCollector extends Collector
 			mysqli_report(MYSQLI_REPORT_STRICT);
 
 			// Connect
-			Utils::Log(LOG_INFO, 'Connecting to '.$sServer);
+			Utils::Log(LOG_INFO, sprintf('Connecting to %s.', $sServer));
 			static::$oDB = new mysqli($sServer, $sLogin, $sPassword, $sDatabase);
 		}
 		

@@ -46,7 +46,10 @@ WHERE disabled != 'on' AND h.status > 1;"))
 					);
 				}
 			}
-
+			else
+			{
+				throw new mysqli_sql_exception($oDB->error, $oDB->errno);
+			}
 		}
 		return static::$aDevices;
 	}
