@@ -23,20 +23,34 @@ class CactiDeviceCollector extends CactiCollector
 			$oDB = static::ConnectDB();
 
 			$sDefaultOrg = Utils::GetConfigurationValue('default_org_id');
+			$sDataQueries = Utils::GetConfigurationValue('interface_data_queries', '0');
 
-			if ($oResult = $oDB->query("SELECT
+			if (!preg_match('/^(\d+,)*\d+$/', $sDataQueries)) throw new InvalidArgumentException('interface_data_queries');
+			$sQuery = sprintf("SELECT
   h.id,
   h.description,
   h.hostname,
   ht.name AS template_name,
-  h.notes
+  h.notes,
+  group_concat(snmp_query_id) AS query_ids
 FROM `host` AS h
 JOIN host_template AS ht
   ON (ht.id = h.host_template_id)
-WHERE disabled != 'on' AND h.status > 1;"))
+LEFT JOIN host_snmp_query AS hsq
+  ON (hsq.host_id = h.id AND hsq.snmp_query_id IN(%s))
+WHERE disabled != 'on' AND h.status > 1
+GROUP BY h.id;", $sDataQueries);
+
+			if ($oResult = $oDB->query($sQuery))
 			{
 				while ($oHost = $oResult->fetch_object())
 				{
+					if ($sDataQueries != '0' && empty($oHost->query_ids))
+					{
+						Utils::Log(LOG_INFO, sprintf('Skipping device %s.', $oHost->description));
+						continue;
+					}
+
 					static::$aDevices[] = array(
 						'primary_key' => $oHost->id,
 						'name' => $oHost->description,

@@ -19,6 +19,8 @@
 		<pattern>/Cisco (\w+)/%2$s</pattern>
 		<pattern>/.+/Other</pattern>
 	</network_device_type_mapping>
+	<!-- Comma separated list of id's of the data queries a host should have. Put 0 to disable -->
+	<interface_data_queries>1</interface_data_queries>
 	<json_placeholders type="hash">
 		<prefix>Cacti</prefix>
 		<cacti_url>http://localhost/cacti</cacti_url>
