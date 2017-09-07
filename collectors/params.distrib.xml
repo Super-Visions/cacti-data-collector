@@ -6,6 +6,8 @@
 	<cacti_db_user>cactiuser</cacti_db_user>
 	<cacti_db_pass>cactiuser</cacti_db_pass>
 	<cacti_db_database>cacti</cacti_db_database>
+	<!-- Path to the cli directory of Cacti (used to refresh data queries) leave empty to disable -->
+	<cacti_cli_path>/usr/share/cacti/cli</cacti_cli_path>
 	<network_device_type_mapping type="array">
 		<!-- Syntax /pattern/replacement where:
 		  any delimiter can be used (not only /) but the delimiter cannot be present in the "replacement" string

@@ -21,16 +21,32 @@ class CactiInterfaceCollector extends CactiCollector
 		if (is_null($this->aInterfaces))
 		{
 			$sQuery = Utils::GetConfigurationValue('interface_sql_query');
+			$sPath = Utils::GetConfigurationValue('cacti_cli_path');
 
 			$oDB = static::ConnectDB();
 			$aDevices = CactiDeviceCollector::GetDevices();
 			$aDeviceNames = array();
 			
+			if (file_exists($sPath.'/poller_reindex_hosts.php'))
+			{
+				$sReindexCommand =  sprintf( '%s %s/%s', PHP_BINARY, $sPath, 'poller_reindex_hosts.php --id=%d --qid=%d');
+			}
+			
 			// Process devices and reindex queries
 			foreach ($aDevices as $aDevice)
 			{
 				$aDeviceNames[$aDevice['primary_key']] = $aDevice['name'];
+				if (isset($sReindexCommand)) {
+					
+					Utils::Log(LOG_DEBUG, sprintf('Reindexing %s...', $aDevice['name']));
+					foreach ($aDevice['query_ids'] as $iDataQuery) {
+						$sReturn = exec(sprintf($sReindexCommand, $aDevice['primary_key'], $iDataQuery));
+						if (Utils::$iConsoleLogLevel >= LOG_INFO) echo $sReturn;
+					}
+					if (Utils::$iConsoleLogLevel >= LOG_DEBUG) echo PHP_EOL;
+				}
 			}
+			if (Utils::$iConsoleLogLevel == LOG_INFO) echo PHP_EOL;
 			
 			if ($oResult = $oDB->query($sQuery))
 			{

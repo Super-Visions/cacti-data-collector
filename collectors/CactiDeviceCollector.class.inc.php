@@ -57,6 +57,7 @@ GROUP BY h.id;", $sDataQueries);
 						'org_id' => $sDefaultOrg,
 						'networkdevicetype_id' => $oNetworkDeviceTypeMappings->MapValue($oHost->template_name, 'Other'),
 						'description' => $oHost->notes,
+						'query_ids' => explode(',', $oHost->query_ids),
 					);
 				}
 			}
@@ -89,7 +90,9 @@ GROUP BY h.id;", $sDataQueries);
 	{
 		if ($this->idx < count(static::$aDevices))
 		{
-			return static::$aDevices[$this->idx++];
+			$aDevice = static::$aDevices[$this->idx++];
+			unset($aDevice['query_ids']);
+			return $aDevice;
 		}
 		return false;
 	}
