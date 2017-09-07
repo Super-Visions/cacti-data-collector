@@ -21,6 +21,7 @@
 	</network_device_type_mapping>
 	<!-- Comma separated list of id's of the data queries a host should have. Put 0 to disable -->
 	<interface_data_queries>1</interface_data_queries>
+	<interface_sql_query><![CDATA[]]></interface_sql_query>
 	<json_placeholders type="hash">
 		<prefix>Cacti</prefix>
 		<cacti_url>http://localhost/cacti</cacti_url>
