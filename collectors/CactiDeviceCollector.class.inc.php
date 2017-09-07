@@ -34,7 +34,7 @@ class CactiDeviceCollector extends CactiCollector
   h.notes,
   group_concat(snmp_query_id) AS query_ids
 FROM `host` AS h
-JOIN host_template AS ht
+LEFT JOIN host_template AS ht
   ON (ht.id = h.host_template_id)
 LEFT JOIN host_snmp_query AS hsq
   ON (hsq.host_id = h.id AND hsq.snmp_query_id IN(%s))
