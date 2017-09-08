@@ -34,6 +34,21 @@
 		<pattern>/^(Cisco|Blue Coat)/%s</pattern>
 		<pattern>/^BIG-IP/F5</pattern>
 	</brand_mapping>
+	<model_mapping type="array">
+		<!-- Syntax /pattern/replacement where:
+		  any delimiter can be used (not only /) but the delimiter cannot be present in the "replacement" string
+		  pattern is a RegExpr pattern
+		  replacement is a sprintf string in which:
+			  %1$s will be replaced by the whole matched text,
+			  %2$s will be replaced by the first matched group, if any group is defined in the RegExpr
+			  %3$s will be replaced by the second matched group, etc...
+		  subject will be the sysDescr value from SNMP
+		-->
+		<pattern>/^Cisco.*Software \((C|cat)(\w+)-/Catalyst %3$s</pattern>
+		<pattern>/^Cisco NX-OS\(tm\) n(\w+),/Nexus %2$s</pattern>
+		<pattern>/^Blue Coat (\S+( Series)?),/%2$s</pattern>
+		<pattern>/^(BIG-IP \w+) :/%2$s</pattern>
+	</model_mapping>
 	<os_version_mapping type="array">
 		<!-- Syntax /pattern/replacement where:
 		  any delimiter can be used (not only /) but the delimiter cannot be present in the "replacement" string

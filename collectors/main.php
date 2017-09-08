@@ -9,12 +9,14 @@
 require_once(APPROOT.'collectors/CactiCollector.class.inc.php');
 require_once(APPROOT.'collectors/CactiDeviceCollector.class.inc.php');
 require_once(APPROOT.'collectors/CactiInterfaceCollector.class.inc.php');
+require_once(APPROOT.'collectors/CactiModelCollector.class.inc.php');
 require_once(APPROOT.'collectors/CactiOSVersionCollector.class.inc.php');
 
 // Register the collectors (one collector class per data synchro task to run)
 // and tell the orchestrator in which order to run them
 
 $iRank = 1;
+Orchestrator::AddCollector($iRank++, 'CactiModelCollector');
 Orchestrator::AddCollector($iRank++, 'CactiOSVersionCollector');
 Orchestrator::AddCollector($iRank++, 'CactiDeviceCollector');
 Orchestrator::AddCollector($iRank++, 'CactiInterfaceCollector');

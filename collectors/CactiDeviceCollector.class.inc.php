@@ -27,6 +27,7 @@ class CactiDeviceCollector extends CactiCollector
 		{
 			$oNetworkDeviceTypeMappings = new MappingTable('network_device_type_mapping');
 			$oBrandMappings = new MappingTable('brand_mapping');
+			$oModelMappings = new MappingTable('model_mapping');
 			$oOSVersionMappings = new MappingTable('os_version_mapping');
 			$aOIDs = array(
 				'1.3.6.1.2.1.1.1.0', // sysDescr
@@ -80,6 +81,7 @@ GROUP BY h.id;", $sDataQueries);
 					$aComments = array();
 					if (!empty($oHost->notes)) $aComments[] = $oHost->notes;
 					$sBrand = null;
+					$sModel = null;
 					$sIOSVersion = null;
 					
 					// Start SNMP session
@@ -113,8 +115,9 @@ GROUP BY h.id;", $sDataQueries);
 							if (!empty($sSysLocation)) $aComments[] = sprintf('sysLocation: %s', $sSysLocation);
 							$aComments[] = sprintf('sysDescr: %s', $sSysDescr);
 							
-							// Map Brand and IOS Version
+							// Map Brand, Model and IOS Version
 							$sBrand = $oBrandMappings->MapValue($sSysDescr);
+							$sModel = $oModelMappings->MapValue($sSysDescr);
 							$sIOSVersion = $oOSVersionMappings->MapValue($sSysDescr);
 						}
 						catch (SNMPException $oEx)
@@ -135,6 +138,7 @@ GROUP BY h.id;", $sDataQueries);
 						'networkdevicetype_id' => $oNetworkDeviceTypeMappings->MapValue($oHost->template_name, 'Other'),
 						'description' => implode(PHP_EOL, $aComments),
 						'brand_id' => $sBrand,
+						'model_id' => $sModel,
 						'iosversion_id' => $sIOSVersion,
 						'query_ids' => explode(',', $oHost->query_ids),
 					);
@@ -185,15 +189,23 @@ GROUP BY h.id;", $sDataQueries);
 	
 	protected function InitProcessBeforeSynchro()
 	{
-		// Retrieve the identifiers of the OSVersion since we must do a lookup based on two fields: Family + Version
+		// Retrieve the identifiers of the IOSVersion since we must do a lookup based on two fields: Brand + Version
 		// which is not supported by the iTop Data Synchro... so let's do the job of an ETL
 		$this->oOSVersionLookup = new LookupTable('SELECT IOSVersion', array('brand_id_friendlyname', 'name'));
+		
+		// Retrieve the identifiers of the Model since we must do a lookup based on two fields: Brand + Model
+		// which is not supported by the iTop Data Synchro... so let's do the job of an ETL
+		$this->oModelLookup = new LookupTable('SELECT Model', array('brand_id_friendlyname', 'name'));
 	}
 	
 	protected function ProcessLineBeforeSynchro(&$aLineData, $iLineIndex)
 	{
 		// Process iosversion_id only if brand and version is set (to reduce warnings)
-		if (empty($aLineData[5]) || empty($aLineData[6])) $aLineData[6] = null;
+		if (empty($aLineData[5]) || empty($aLineData[7])) $aLineData[7] = null;
 		else $this->oOSVersionLookup->Lookup($aLineData, array('brand_id', 'iosversion_id'), 'iosversion_id', $iLineIndex);
+		
+		// Process model_id only if brand and model is set (to reduce warnings)
+		if (empty($aLineData[5]) || empty($aLineData[6])) $aLineData[6] = null;
+		else $this->oModelLookup->Lookup($aLineData, array('brand_id', 'model_id'), 'model_id', $iLineIndex);
 	}
 }

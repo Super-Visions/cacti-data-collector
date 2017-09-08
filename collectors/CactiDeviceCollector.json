@@ -143,9 +143,9 @@
 		},
 		{
 			"attcode": "model_id",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
-			"update_policy": "master_locked",
+			"update_policy": "master_unlocked",
 			"reconciliation_attcode": "",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "model_id"
