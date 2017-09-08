@@ -8,7 +8,14 @@
  */
 class CactiDeviceCollector extends CactiCollector
 {
-	protected static $aDevices = null;
+	/**
+	 * @var array
+	 */
+	protected static $aDevices;
+	/**
+	 * @var LookupTable
+	 */
+	protected $oOSVersionLookup;
 	
 	/**
 	 * @return array
@@ -20,6 +27,7 @@ class CactiDeviceCollector extends CactiCollector
 		{
 			$oNetworkDeviceTypeMappings = new MappingTable('network_device_type_mapping');
 			$oBrandMappings = new MappingTable('brand_mapping');
+			$oOSVersionMappings = new MappingTable('os_version_mapping');
 			$aOIDs = array(
 				'1.3.6.1.2.1.1.1.0', // sysDescr
 				'1.3.6.1.2.1.1.4.0', // sysContact
@@ -72,6 +80,7 @@ GROUP BY h.id;", $sDataQueries);
 					$aComments = array();
 					if (!empty($oHost->notes)) $aComments[] = $oHost->notes;
 					$sBrand = null;
+					$sIOSVersion = null;
 					
 					// Start SNMP session
 					$sHostname = sprintf('%s:%d', $oHost->hostname, $oHost->snmp_port);
@@ -104,8 +113,9 @@ GROUP BY h.id;", $sDataQueries);
 							if (!empty($sSysLocation)) $aComments[] = sprintf('sysLocation: %s', $sSysLocation);
 							$aComments[] = sprintf('sysDescr: %s', $sSysDescr);
 							
-							// Map Brand
+							// Map Brand and IOS Version
 							$sBrand = $oBrandMappings->MapValue($sSysDescr);
+							$sIOSVersion = $oOSVersionMappings->MapValue($sSysDescr);
 						}
 						catch (SNMPException $oEx)
 						{
@@ -125,6 +135,7 @@ GROUP BY h.id;", $sDataQueries);
 						'networkdevicetype_id' => $oNetworkDeviceTypeMappings->MapValue($oHost->template_name, 'Other'),
 						'description' => implode(PHP_EOL, $aComments),
 						'brand_id' => $sBrand,
+						'iosversion_id' => $sIOSVersion,
 						'query_ids' => explode(',', $oHost->query_ids),
 					);
 				}
@@ -163,5 +174,25 @@ GROUP BY h.id;", $sDataQueries);
 			return $aDevice;
 		}
 		return false;
+	}
+	
+	protected function MustProcessBeforeSynchro()
+	{
+		// We must reprocess the CSV data obtained from vSphere
+		// to lookup the Brand/Model and OSFamily/OSVersion in iTop
+		return true;
+	}
+	
+	protected function InitProcessBeforeSynchro()
+	{
+		// Retrieve the identifiers of the OSVersion since we must do a lookup based on two fields: Family + Version
+		// which is not supported by the iTop Data Synchro... so let's do the job of an ETL
+		$this->oOSVersionLookup = new LookupTable('SELECT IOSVersion', array('brand_id_friendlyname', 'name'));
+	}
+	
+	protected function ProcessLineBeforeSynchro(&$aLineData, $iLineIndex)
+	{
+		// Process each line of the CSV
+		$this->oOSVersionLookup->Lookup($aLineData, array('brand_id', 'iosversion_id'), 'iosversion_id', $iLineIndex);
 	}
 }

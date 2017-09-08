@@ -34,6 +34,23 @@
 		<pattern>/^(Cisco|Blue Coat)/%s</pattern>
 		<pattern>/^BIG-IP/F5</pattern>
 	</brand_mapping>
+	<os_version_mapping type="array">
+		<!-- Syntax /pattern/replacement where:
+		  any delimiter can be used (not only /) but the delimiter cannot be present in the "replacement" string
+		  pattern is a RegExpr pattern
+		  replacement is a sprintf string in which:
+			  %1$s will be replaced by the whole matched text,
+			  %2$s will be replaced by the first matched group, if any group is defined in the RegExpr
+			  %3$s will be replaced by the second matched group, etc...
+		  subject will be the sysDescr value from SNMP
+		-->
+		<pattern>/^Cisco IOS Software,.*Version (\d+\.\d+\(\d+\)\w+),/IOS %2$s</pattern>
+		<pattern>/^Cisco IOS Software, (.+) Software,.*Version (.+) RELEASE/%2$s %3$s</pattern>
+		<pattern>/^Blue Coat.*Version: (\w+ [\d\.]+),/%2$s</pattern>
+		<pattern>/^BIG-IP.*software release ([\d\.]+),/BIG-IP %2$s</pattern>
+		<pattern>/^Cisco Adaptive Security Appliance Version (.+)$/ASA %2$s</pattern>
+		<pattern>/^Cisco NX-OS.*Version (.+), RELEASE/NX-OS %2$s</pattern>
+	</os_version_mapping>
 	<!-- Comma separated list of id's of the data queries a host should have. Put 0 to disable -->
 	<interface_data_queries>1</interface_data_queries>
 	<interface_sql_query><![CDATA[]]></interface_sql_query>
