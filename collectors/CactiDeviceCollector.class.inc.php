@@ -192,7 +192,8 @@ GROUP BY h.id;", $sDataQueries);
 	
 	protected function ProcessLineBeforeSynchro(&$aLineData, $iLineIndex)
 	{
-		// Process each line of the CSV
-		$this->oOSVersionLookup->Lookup($aLineData, array('brand_id', 'iosversion_id'), 'iosversion_id', $iLineIndex);
+		// Process iosversion_id only if brand and version is set (to reduce warnings)
+		if (empty($aLineData[5]) || empty($aLineData[6])) $aLineData[6] = null;
+		else $this->oOSVersionLookup->Lookup($aLineData, array('brand_id', 'iosversion_id'), 'iosversion_id', $iLineIndex);
 	}
 }
