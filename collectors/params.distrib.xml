@@ -21,6 +21,19 @@
 		<pattern>/Cisco (\w+)/%2$s</pattern>
 		<pattern>/.+/Other</pattern>
 	</network_device_type_mapping>
+	<brand_mapping type="array">
+		<!-- Syntax /pattern/replacement where:
+		  any delimiter can be used (not only /) but the delimiter cannot be present in the "replacement" string
+		  pattern is a RegExpr pattern
+		  replacement is a sprintf string in which:
+			  %1$s will be replaced by the whole matched text,
+			  %2$s will be replaced by the first matched group, if any group is defined in the RegExpr
+			  %3$s will be replaced by the second matched group, etc...
+		  subject will be the sysDescr value from SNMP
+		-->
+		<pattern>/^(Cisco|Blue Coat)/%s</pattern>
+		<pattern>/^BIG-IP/F5</pattern>
+	</brand_mapping>
 	<!-- Comma separated list of id's of the data queries a host should have. Put 0 to disable -->
 	<interface_data_queries>1</interface_data_queries>
 	<interface_sql_query><![CDATA[]]></interface_sql_query>

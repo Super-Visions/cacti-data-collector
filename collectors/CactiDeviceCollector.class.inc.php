@@ -19,6 +19,7 @@ class CactiDeviceCollector extends CactiCollector
 		if (is_null(static::$aDevices))
 		{
 			$oNetworkDeviceTypeMappings = new MappingTable('network_device_type_mapping');
+			$oBrandMappings = new MappingTable('brand_mapping');
 			$aOIDs = array(
 				'1.3.6.1.2.1.1.1.0', // sysDescr
 				'1.3.6.1.2.1.1.4.0', // sysContact
@@ -70,6 +71,7 @@ GROUP BY h.id;", $sDataQueries);
 					// Prepare values
 					$aComments = array();
 					if (!empty($oHost->notes)) $aComments[] = $oHost->notes;
+					$sBrand = null;
 					
 					// Start SNMP session
 					$sHostname = sprintf('%s:%d', $oHost->hostname, $oHost->snmp_port);
@@ -101,6 +103,9 @@ GROUP BY h.id;", $sDataQueries);
 							if (!empty($sSysContact)) $aComments[] = sprintf('sysContact: %s', $sSysContact);
 							if (!empty($sSysLocation)) $aComments[] = sprintf('sysLocation: %s', $sSysLocation);
 							$aComments[] = sprintf('sysDescr: %s', $sSysDescr);
+							
+							// Map Brand
+							$sBrand = $oBrandMappings->MapValue($sSysDescr);
 						}
 						catch (SNMPException $oEx)
 						{
@@ -119,6 +124,7 @@ GROUP BY h.id;", $sDataQueries);
 						'org_id' => $sDefaultOrg,
 						'networkdevicetype_id' => $oNetworkDeviceTypeMappings->MapValue($oHost->template_name, 'Other'),
 						'description' => implode(PHP_EOL, $aComments),
+						'brand_id' => $sBrand,
 						'query_ids' => explode(',', $oHost->query_ids),
 					);
 				}
