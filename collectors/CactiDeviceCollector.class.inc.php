@@ -19,6 +19,12 @@ class CactiDeviceCollector extends CactiCollector
 		if (is_null(static::$aDevices))
 		{
 			$oNetworkDeviceTypeMappings = new MappingTable('network_device_type_mapping');
+			$aOIDs = array(
+				'1.3.6.1.2.1.1.1.0', // sysDescr
+				'1.3.6.1.2.1.1.4.0', // sysContact
+				'1.3.6.1.2.1.1.5.0', // sysName
+				'1.3.6.1.2.1.1.6.0', // sysLocation
+			);
 
 			$oDB = static::ConnectDB();
 
@@ -32,6 +38,16 @@ class CactiDeviceCollector extends CactiCollector
   h.hostname,
   ht.name AS template_name,
   h.notes,
+  h.snmp_port,
+  h.snmp_version,
+  h.snmp_community,
+  h.snmp_timeout,
+  h.snmp_auth_protocol,
+  h.snmp_username,
+  h.snmp_password,
+  h.snmp_context,
+  h.snmp_priv_protocol,
+  h.snmp_priv_passphrase,
   group_concat(snmp_query_id) AS query_ids
 FROM `host` AS h
 LEFT JOIN host_template AS ht
@@ -50,13 +66,59 @@ GROUP BY h.id;", $sDataQueries);
 						Utils::Log(LOG_INFO, sprintf('Skipping device %s.', $oHost->description));
 						continue;
 					}
+					
+					// Prepare values
+					$aComments = array();
+					if (!empty($oHost->notes)) $aComments[] = $oHost->notes;
+					
+					// Start SNMP session
+					$sHostname = sprintf('%s:%d', $oHost->hostname, $oHost->snmp_port);
+					switch ($oHost->snmp_version)
+					{
+						case 1:
+							$oSession = new SNMP(SNMP::VERSION_1, $sHostname, $oHost->snmp_community, $oHost->snmp_timeout*1000);
+							break;
+						case 2:
+							$oSession = new SNMP(SNMP::VERSION_2c, $sHostname, $oHost->snmp_community, $oHost->snmp_timeout*1000);
+							break;
+						case 3:
+							$oSession = new SNMP(SNMP::VERSION_3, $sHostname, $oHost->snmp_username, $oHost->snmp_timeout*1000);
+							if ($oHost->snmp_priv_protocol == '[None]') $oSession->setSecurity('authNoPriv', $oHost->snmp_auth_protocol, $oHost->snmp_password, null, null, $oHost->snmp_context);
+							else $oSession->setSecurity('authPriv', $oHost->snmp_auth_protocol, $oHost->snmp_password, $oHost->snmp_priv_protocol, $oHost->snmp_priv_passphrase, $oHost->snmp_context);
+							break;
+					}
+					
+					// Get additional system info
+					if (isset($oSession))
+					{
+						$oSession->exceptions_enabled = SNMP::ERRNO_ANY;
+						$oSession->valueretrieval = SNMP_VALUE_PLAIN;
+						try {
+							list($sSysDescr, $sSysContact, $sSysName, $sSysLocation) = array_values($oSession->get($aOIDs));
+							
+							// Add additional info to description field
+							if ($sSysName != $oHost->description) $aComments[] = sprintf('sysName: %s', $sSysName);
+							if (!empty($sSysContact)) $aComments[] = sprintf('sysContact: %s', $sSysContact);
+							if (!empty($sSysLocation)) $aComments[] = sprintf('sysLocation: %s', $sSysLocation);
+							$aComments[] = sprintf('sysDescr: %s', $sSysDescr);
+						}
+						catch (SNMPException $oEx)
+						{
+							Utils::Log(LOG_WARNING, sprintf('SNMP error for %s: %s', $oHost->description, $oEx->getMessage()));
+						}
+						
+						// Stop SNMP session
+						$oSession->close();
+						unset($oSession);
+					}
+					else Utils::Log(LOG_INFO, sprintf('No SNMP lookup for %s.', $oHost->description));
 
 					static::$aDevices[] = array(
 						'primary_key' => $oHost->id,
 						'name' => $oHost->description,
 						'org_id' => $sDefaultOrg,
 						'networkdevicetype_id' => $oNetworkDeviceTypeMappings->MapValue($oHost->template_name, 'Other'),
-						'description' => $oHost->notes,
+						'description' => implode(PHP_EOL, $aComments),
 						'query_ids' => explode(',', $oHost->query_ids),
 					);
 				}

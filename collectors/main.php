@@ -16,3 +16,5 @@ require_once(APPROOT.'collectors/CactiInterfaceCollector.class.inc.php');
 $iRank = 1;
 Orchestrator::AddCollector($iRank++, 'CactiDeviceCollector');
 Orchestrator::AddCollector($iRank++, 'CactiInterfaceCollector');
+
+Orchestrator::AddRequirement('0.1', 'snmp');
