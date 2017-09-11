@@ -96,5 +96,5 @@
 	],
 	"user_delete_policy": "nobody",
 	"url_icon": "$cacti_url$\/images\/favicon.ico",
-	"url_application": "$cacti_url$"
+	"url_application": "$cacti_url$\/index.php"
 }
