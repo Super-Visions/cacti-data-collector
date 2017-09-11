@@ -16,6 +16,10 @@ class CactiDeviceCollector extends CactiCollector
 	 * @var LookupTable
 	 */
 	protected $oOSVersionLookup;
+	/**
+	 * @var LookupTable
+	 */
+	protected $oModelLookup;
 	
 	/**
 	 * @return array
