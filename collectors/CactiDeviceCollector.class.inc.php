@@ -212,4 +212,12 @@ GROUP BY h.id;", $sDataQueries);
 		if (empty($aLineData[5]) || empty($aLineData[6])) $aLineData[6] = null;
 		else $this->oModelLookup->Lookup($aLineData, array('brand_id', 'model_id'), 'model_id', $iLineIndex);
 	}
+	
+	public function AttributeIsOptional($sAttCode)
+	{
+		// san_list comes from the 'Advanced Storage Management' module
+		if ($sAttCode == 'san_list') return true;
+		
+		return parent::AttributeIsOptional($sAttCode);
+	}
 }
