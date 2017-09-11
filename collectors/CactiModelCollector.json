@@ -42,7 +42,7 @@
 			"friendlyname": "type"
 		}
 	],
-	"user_delete_policy": "nobody",
+	"user_delete_policy": "administrators",
 	"url_icon": "$cacti_url$\/images\/favicon.ico",
 	"url_application": "$cacti_url$"
 }
