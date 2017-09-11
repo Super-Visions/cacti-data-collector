@@ -44,7 +44,7 @@
 			  %3$s will be replaced by the second matched group, etc...
 		  subject will be the sysDescr value from SNMP
 		-->
-		<pattern>/^Cisco.*Software \((C|cat)(\w+)-/Catalyst %3$s</pattern>
+		<pattern>/^Cisco.*Software \(c(at)?(\w+)-/Catalyst %3$s</pattern>
 		<pattern>/^Cisco NX-OS\(tm\) n(\w+),/Nexus %2$s</pattern>
 		<pattern>/^Blue Coat (\S+( Series)?),/%2$s</pattern>
 		<pattern>/^(BIG-IP \w+) :/%2$s</pattern>
