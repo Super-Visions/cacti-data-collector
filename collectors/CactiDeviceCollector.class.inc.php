@@ -87,6 +87,7 @@ GROUP BY h.id;", $sDataQueries);
 					$sBrand = null;
 					$sModel = null;
 					$sIOSVersion = null;
+					$sIP = filter_var($oHost->hostname, FILTER_VALIDATE_IP) ? $oHost->hostname : gethostbyname($oHost->hostname);
 					
 					// Start SNMP session
 					$sHostname = sprintf('%s:%d', $oHost->hostname, $oHost->snmp_port);
@@ -144,6 +145,7 @@ GROUP BY h.id;", $sDataQueries);
 						'brand_id' => $sBrand,
 						'model_id' => $sModel,
 						'iosversion_id' => $sIOSVersion,
+						'managementip_id' => filter_var($sIP, FILTER_VALIDATE_IP) ? $sIP : null,
 						'query_ids' => explode(',', $oHost->query_ids),
 					);
 				}
