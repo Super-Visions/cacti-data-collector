@@ -146,7 +146,7 @@ GROUP BY h.id;", $sDataQueries);
 						'model_id' => $sModel,
 						'iosversion_id' => $sIOSVersion,
 						'managementip_id' => filter_var($sIP, FILTER_VALIDATE_IP) ? $sIP : null,
-						'query_ids' => explode(',', $oHost->query_ids),
+						'query_ids' => empty($oHost->query_ids) ? array() : explode(',', $oHost->query_ids),
 					);
 				}
 			}
