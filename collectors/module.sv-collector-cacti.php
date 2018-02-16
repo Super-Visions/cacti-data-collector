@@ -9,7 +9,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'sv-collector-cacti/0.1.0',
+	'sv-collector-cacti/1.0.0',
 	array(
 		// Identification
 		//
