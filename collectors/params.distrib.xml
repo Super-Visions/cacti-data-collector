@@ -32,7 +32,8 @@
 		  subject will be the sysDescr value from SNMP
 		-->
 		<pattern>/^(Cisco|Blue Coat)/%s</pattern>
-		<pattern>/^BIG-IP/F5</pattern>
+		<pattern>/^(BIG-IP|Linux \S+ \S+\.f5\.\S+ #)/F5</pattern>
+		<pattern>/^SG-ME director/Blue Coat</pattern>
 	</brand_mapping>
 	<model_mapping type="array">
 		<!-- Syntax /pattern/replacement where:
@@ -62,13 +63,80 @@
 		<pattern>/^Cisco IOS Software,.*Version (\d+\.\d+\(\d+\)\w+),/IOS %2$s</pattern>
 		<pattern>/^Cisco IOS Software, (.+) Software,.*Version (.+) RELEASE/%2$s %3$s</pattern>
 		<pattern>/^Blue Coat.*Version: (\w+ [\d\.]+),/%2$s</pattern>
+		<pattern>/^Blue Coat.*ProxyAV Version: ([\d\.]+),/ProxyAV %2$s</pattern>
 		<pattern>/^BIG-IP.*software release ([\d\.]+),/BIG-IP %2$s</pattern>
 		<pattern>/^Cisco Adaptive Security Appliance Version (.+)$/ASA %2$s</pattern>
 		<pattern>/^Cisco NX-OS.*Version (.+), RELEASE/NX-OS %2$s</pattern>
+		<pattern>/^SG-ME director ([\d\.]+) /Director %2$s</pattern>
+		<pattern>/^Linux \S+ (\S+) #/Linux %2$s</pattern>
 	</os_version_mapping>
 	<!-- Comma separated list of id's of the data queries a host should have. Put 0 to disable -->
 	<interface_data_queries>1</interface_data_queries>
-	<interface_sql_query><![CDATA[]]></interface_sql_query>
+	<interface_sql_query><![CDATA[
+SELECT
+  concat_ws('-', h.id, ifName.snmp_query_id, ifName.field_value) AS primary_key,
+  h.description AS connectableci_id,
+  ifName.field_value AS `name`,
+  ifHwAddr.field_value AS macaddress,
+  ifHighSpeed.field_value AS speed,
+  ifAlias.field_value AS `comment`,
+
+  ifDescr.field_value AS ifDescr,
+  ifOperStatus.field_value AS ifOperStatus
+FROM `host` AS h
+JOIN host_snmp_cache AS ifName
+  ON( ifName.field_name = 'ifName' AND ifName.host_id = h.id )
+LEFT JOIN host_snmp_cache AS ifDescr
+  ON(
+    ifDescr.field_name = 'ifDescr' AND
+    ifDescr.host_id = h.id AND
+    ifDescr.snmp_query_id = ifName.snmp_query_id AND
+    ifDescr.snmp_index = ifName.snmp_index
+  )
+LEFT JOIN host_snmp_cache AS ifType
+  ON(
+    ifType.field_name = 'ifType' AND
+    ifType.host_id = h.id AND
+    ifType.snmp_query_id = ifName.snmp_query_id AND
+    ifType.snmp_index = ifName.snmp_index
+  )
+LEFT JOIN host_snmp_cache AS ifOperStatus
+  ON(
+    ifOperStatus.field_name = 'ifOperStatus' AND
+    ifOperStatus.host_id = h.id AND
+    ifOperStatus.snmp_query_id = ifName.snmp_query_id AND
+    ifOperStatus.snmp_index = ifName.snmp_index
+  )
+LEFT JOIN host_snmp_cache AS ifAlias
+  ON(
+    ifAlias.field_name = 'ifAlias' AND
+    ifAlias.host_id = h.id AND
+    ifAlias.snmp_query_id = ifName.snmp_query_id AND
+    ifAlias.snmp_index = ifName.snmp_index
+  )
+LEFT JOIN host_snmp_cache AS ifHwAddr
+  ON(
+    ifHwAddr.field_name = 'ifHwAddr' AND
+    ifHwAddr.host_id = h.id AND
+    ifHwAddr.snmp_query_id = ifName.snmp_query_id AND
+    ifHwAddr.snmp_index = ifName.snmp_index
+  )
+LEFT JOIN host_snmp_cache AS ifHighSpeed
+  ON(
+    ifHighSpeed.field_name = 'ifHighSpeed' AND
+    ifHighSpeed.host_id = h.id AND
+    ifHighSpeed.snmp_query_id = ifName.snmp_query_id AND
+    ifHighSpeed.snmp_index = ifName.snmp_index
+  )
+WHERE
+  h.disabled != 'on'
+  AND (
+    ifType.field_value = 'ethernetCsmacd(6)'
+    OR ifType.field_value = 'frameRelay(32)'
+    OR ISNULL(ifType.field_value)
+  )
+ORDER BY h.description, ifName.field_value;
+]]></interface_sql_query>
 	<collect_ip_address>yes</collect_ip_address>
 	<json_placeholders type="hash">
 		<prefix>Cacti</prefix>
